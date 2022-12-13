@@ -1,4 +1,4 @@
-rectangularFACE test;
+rectangularPRISM test;
 float[] t;
 
 Boolean disO = true,
@@ -22,7 +22,7 @@ void setup()
 {
   size(500,500, P3D);
   update = false;
-  test = new rectangularFACE(150,5);
+  test = new rectangularPRISM(150,5);
 }
 
 void draw()

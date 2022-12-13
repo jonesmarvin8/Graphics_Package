@@ -2,7 +2,6 @@ import java.util.Arrays;
 
 public class rectangularFACE
 {
-  public static final int NUM_FACES = 6;
   public final static int NODE_SIZE = 4;
   public final static int DIMENSION_SIZE = 3;
   

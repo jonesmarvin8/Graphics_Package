@@ -54,5 +54,5 @@ public class squareNODE
   { node_points[i].set_point(val); }
 
   public float[] get_point_i(int i)
-  { return node_points[i].get_point(); }
+  { return node_points[i].get_point();}
 }
