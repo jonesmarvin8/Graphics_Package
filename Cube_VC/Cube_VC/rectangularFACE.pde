@@ -2,15 +2,19 @@ import java.util.Arrays;
 
 public class rectangularFACE
 {
-  public final static int NODE_SIZE = 4;
+  public final static int DEFAULT_NODE_SIZE = 3;
+  public final static int TRI_NODE_SIZE = 3;
+  public final static int QUAD_NODE_SIZE = 4;
   public final static int DIMENSION_SIZE = 3;
+  public final static int DIMENSION_IMAGE_SIZE = 2;
   
-  int node_width,
+  int node_size,
+      node_width,
       node_height,
       face_num_width,
       face_num_height;
   
-  squareNODE[][] face_array;
+  vertexNODE[][] face_array;
   
   float[][] color_vec;
   float[][] temp_node;
@@ -19,29 +23,37 @@ public class rectangularFACE
   public rectangularFACE(int w_t, int n_t)
   //Square face
   {
+    node_size = DEFAULT_NODE_SIZE;
     node_width = w_t;
     node_height = w_t;
     face_num_width = n_t;
     face_num_height = n_t;
     
-    color_vec = new float[4][2];
+    color_vec = new float[node_size][DIMENSION_IMAGE_SIZE];
+    temp_node = new float[node_size][DIMENSION_SIZE];
     
-    temp_node = new float[4][3];
+    if(node_size == QUAD_NODE_SIZE)
+    { init_quad_face(); }
+    else if (node_size == TRI_NODE_SIZE)
+    { init_tri_face(); }
     
-    init_face();
     setup_bw();
   }
   
-  private void init_face()
+  /*
+  TODO: non cube, take in quad/tri options (make sure to check for 3/4)
+  */
+  
+  private void init_quad_face()
   {
-    face_array = new squareNODE[face_num_width][face_num_height];
+    face_array = new vertexNODE[face_num_height][face_num_width];
     
-    for(int x = 0; x < face_num_width; x++)
+    for(int y = 0; y < face_array.length; y++)
     {
-      for(int y = 0; y < face_num_height; y++)
+      for(int x = 0; x < face_array[0].length; x++)
       {
-        face_array[x][y] = new squareNODE();
-        face_array[x][y].set_node( new float[][] {{x*node_width, y*node_height, 0},
+        face_array[y][x] = new vertexNODE(node_size);
+        face_array[y][x].set_node( new float[][] {{x*node_width, y*node_height, 0},
                                                  {(x+1)*node_width, y*node_height, 0},
                                                  {(x+1)*node_width, (y+1)*node_height, 0},
                                                  {x*node_width, (y+1)*node_height, 0}} );
@@ -49,46 +61,54 @@ public class rectangularFACE
     }
   }
   
+  private void init_tri_face()
+  //TODO: change the patterning to alternate
+  {
+    face_array = new vertexNODE[face_num_height][2*face_num_width];
+    
+    for(int y = 0; y < face_array.length; y++)
+    {
+      for(int x = 0; x < face_array[0].length; x++)
+      {
+        face_array[y][x] = new vertexNODE(node_size);
+        face_array[y][x].set_node( new float[][] {{((x-x%2)/2)*node_width, y*node_height, 0},
+                                                 {((x-x%2)/2 +1)*node_width, y*node_height + ((y+1)%2-x%2+y%2)*node_height, 0},
+                                                 {(x/2 + x%2)*node_width, (y+1)*node_height, 0}} );
+      }
+    }
+  }
+  
   public void display()
   {
-    beginShape(QUAD);
+    if(node_size == QUAD_NODE_SIZE){
+      beginShape(QUAD);}
+    else if(node_size == TRI_NODE_SIZE){
+      beginShape(TRIANGLE);}
+    
     textureMode(IMAGE);
     texture(bw);  
     
-    for(int x = 0; x < face_num_width; x++)
+    for(int y = 0; y < face_array.length; y++)
     {
-      for(int y = 0; y < face_num_width; y++)
+      for(int x = 0; x < face_array[0].length; x++)
       {
-        for(int i = 0; i < NODE_SIZE; i++)
-        { temp_node[i] =  Arrays.copyOf(face_array[x][y].get_point_i(i), DIMENSION_SIZE); }
+        for(int i = 0; i < node_size; i++)
+        { temp_node[i] =  Arrays.copyOf(face_array[y][x].get_point_i(i), DIMENSION_SIZE); }
         
-        set_color_vec(face_array[x][y].get_color());
-        vertex(temp_node[0][0], 
-               temp_node[0][1],
-               temp_node[0][2],
-               color_vec[0][0],
-               color_vec[0][1]);
-        vertex(temp_node[1][0], 
-               temp_node[1][1],
-               temp_node[1][2],
-               color_vec[1][0],
-               color_vec[1][1]);
-        vertex(temp_node[2][0], 
-               temp_node[2][1],
-               temp_node[2][2],
-               color_vec[2][0],
-               color_vec[2][1]);
-        vertex(temp_node[3][0], 
-               temp_node[3][1],
-               temp_node[3][2],
-               color_vec[3][0],
-               color_vec[3][1]);
-   
+        set_color_vec(face_array[y][x].get_color());
+        
+        for(int i = 0; i < node_size; i++)
+        {
+          vertex(temp_node[i][0], 
+                 temp_node[i][1],
+                 temp_node[i][2],
+                 color_vec[i][0],
+                 color_vec[i][1]);
+        }
       }
     }
     
-    endShape();
-  
+    endShape();  
   }
   
   

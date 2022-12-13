@@ -9,23 +9,36 @@ node_coords[][] - 4 coordinate points for each vertex of the square.
 node_color - color; CURRENTLY an int for just black and white.
 */
 
-public class squareNODE
+public class vertexNODE
 {
-  public final static int NODE_SIZE = 4;
   public final static int DIMENSION_SIZE = 3;
   public final static int COLOR_DEFAULT = 255;
+  public final static int DEFAULT_VERTEX_SIZE = 3;
   
   coordinatePOINT[] node_points;
-  int node_color;
+  int node_color,
+      node_size;
   
-  squareNODE()
+  vertexNODE(int ns_t)
   {
-    node_color = 255; //Default color to white.
+    node_color = COLOR_DEFAULT; //Default color to white.
+    node_size = ns_t;
     
-    node_points = new coordinatePOINT[NODE_SIZE];
-    for(int i = 0; i < NODE_SIZE; i++)
+    node_points = new coordinatePOINT[node_size];
+    for(int i = 0; i < node_size; i++)
     { node_points[i] = new coordinatePOINT(); }
   }
+  
+  vertexNODE()
+  {
+    node_color = COLOR_DEFAULT; //Default color to white.
+    node_size = DEFAULT_VERTEX_SIZE;
+    
+    node_points = new coordinatePOINT[node_size];
+    for(int i = 0; i < node_size; i++)
+    { node_points[i] = new coordinatePOINT(); }
+  }
+  
 
   public void set_color(int c_t)
   { 
@@ -42,9 +55,9 @@ public class squareNODE
   
   public void set_node(float[][] vals)
   {
-    if(vals.length == NODE_SIZE)
+    if(vals.length == node_size)
     {
-      for(int i = 0; i < NODE_SIZE; i++)
+      for(int i = 0; i < node_size; i++)
       {  node_points[i].set_point(vals[i]); }
     } else{
       System.out.println("ERROR: set_node(): val is wrong length ("+ vals.length +"."); }
