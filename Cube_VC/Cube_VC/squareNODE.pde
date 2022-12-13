@@ -40,13 +40,12 @@ public class squareNODE
   public int get_color()
   { return node_color; }
   
-  public void set_node(float[][] vals, int c_t)
+  public void set_node(float[][] vals)
   {
     if(vals.length == NODE_SIZE)
     {
       for(int i = 0; i < NODE_SIZE; i++)
       {  node_points[i].set_point(vals[i]); }
-      set_color(c_t);
     } else{
       System.out.println("ERROR: set_node(): val is wrong length ("+ vals.length +"."); }
   }
@@ -56,5 +55,4 @@ public class squareNODE
 
   public float[] get_point_i(int i)
   { return node_points[i].get_point(); }
-
 }
