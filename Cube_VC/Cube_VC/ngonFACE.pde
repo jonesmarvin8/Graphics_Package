@@ -53,6 +53,12 @@ public class ngonFACE{
     }
   }
 
+  public float[] get_node_i_point_1(int i)
+  { return face_array[i].get_point_i(1); }
+  
+  public float[] get_node_i_point_2(int i)
+  { return face_array[i].get_point_i(2); }
+
   public void display()
   {
     beginShape(TRIANGLE);

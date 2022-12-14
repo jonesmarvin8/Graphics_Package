@@ -1,5 +1,6 @@
+// rectangularCYLINDER(int n_t, float rad_t, float height_t)
 rectangularPRISM test1;
-ngonFACE test;
+rectangularCYLINDER test;
 float[] t;
 
 Boolean disO = true,
@@ -23,7 +24,7 @@ void setup()
 {
   size(500,500, P3D);
   update = false;
-  test = new ngonFACE(12,150);
+  test = new rectangularCYLINDER(50,150,10,200);
   //test1 = new rectangularPRISM(150,5);
 }
 
@@ -109,17 +110,17 @@ void keyPressed()
   }
 //}
   else if(code == 82)
-  { x_rot += PI/2; }
+  { x_rot += PI/5; }
   else if(code == 84)
-  { x_rot -= PI/2; }
+  { x_rot -= PI/5; }
   else if(code == 70)
-  { y_rot += PI/2;}
+  { y_rot += PI/5;}
   else if(code == 71)
-  { y_rot -= PI/2;}
+  { y_rot -= PI/5;}
   else if(code == 66) //b
-  { z_rot += PI/2;}
+  { z_rot += PI/5;}
   else if(code == 86) //v
-  { z_rot -= PI/2;}
+  { z_rot -= PI/5;}
  
 }
 
