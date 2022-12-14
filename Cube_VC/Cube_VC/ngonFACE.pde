@@ -40,11 +40,8 @@ public class ngonFACE{
     face_array = new vertexNODE[num_sides];
     
     face_array[0] = new vertexNODE(node_size);
-    face_array[0].set_node( new float[][] {{0, 0, 0},
-                                           {ngon_rad, 0, 0},
-                                           {ngon_rad*cos(2*PI/num_sides), ngon_rad*sin(2*PI/num_sides), 0}});
-    
-    for(int i = 1; i < face_array.length; i++)
+ 
+    for(int i = 0; i < face_array.length; i++)
     {
         face_array[i] = new vertexNODE(node_size);
         face_array[i].set_node( new float[][] {{0, 0, 0},

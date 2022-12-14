@@ -1,6 +1,7 @@
 // rectangularCYLINDER(int n_t, float rad_t, float height_t)
 rectangularPRISM test1;
-rectangularCYLINDER test;
+//rectangularCYLINDER test;
+frustrumCONE test;
 float[] t;
 
 Boolean disO = true,
@@ -24,7 +25,7 @@ void setup()
 {
   size(500,500, P3D);
   update = false;
-  test = new rectangularCYLINDER(50,150,10,200);
+  test = new frustrumCONE(50, new float[] {150.0,50},30,200);
   //test1 = new rectangularPRISM(150,5);
 }
 

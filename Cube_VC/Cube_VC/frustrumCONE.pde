@@ -1,6 +1,6 @@
 import java.util.Arrays;
 
-public class rectangularCYLINDER
+public class frustrumCONE
 {
   public final static int DEFAULT_NODE_SIZE = 3;
   public final static int TRI_NODE_SIZE = 3;
@@ -8,13 +8,18 @@ public class rectangularCYLINDER
   public final static int DIMENSION_SIZE = 3;
   public final static int DIMENSION_IMAGE_SIZE = 2;
   public final static int NUM_ENDS = 2;
+  public final static float DEFAULT_BASE_RAD = 150;
+  public final static float DEFAULT_TOP_RAD = 50;
     
   int poly_num,
       lateral_layer_count;
   float base_rad,
-        cylinder_height,
-        lateral_node_height;
-  ngonFACE[] cylinder_ends;
+        top_rad,
+        cone_height,
+        slant_height,
+        lateral_node_height,
+        incr_rad;
+  ngonFACE[] cone_ends;
   vertexNODE[][] lateral_array;
   
   float[][] temp_points;
@@ -22,19 +27,35 @@ public class rectangularCYLINDER
   
   PImage bw;
   
-  public rectangularCYLINDER(int n_t, float rad_t, int lateral_t, float height_t)
+  public frustrumCONE(int n_t, float[] rad_array, int lateral_t, float height_t)
   {
-    base_rad = rad_t;
+    if(rad_array.length < 2)
+    { 
+      base_rad = DEFAULT_BASE_RAD;
+      top_rad = DEFAULT_TOP_RAD;
+    }
+    else if( rad_array[0] >= rad_array[1] )
+    {
+      base_rad = rad_array[0];
+      top_rad = rad_array[1];
+    }
+    else{
+      base_rad = rad_array[1];
+      top_rad = rad_array[0];
+    }
+    
     poly_num = n_t;
     
-    cylinder_ends = new ngonFACE[NUM_ENDS];
-    cylinder_ends[0] = new ngonFACE(poly_num, base_rad);
-    cylinder_ends[1] = new ngonFACE(poly_num, base_rad);
+    cone_ends = new ngonFACE[NUM_ENDS];
+    cone_ends[0] = new ngonFACE(poly_num, base_rad);
+    cone_ends[1] = new ngonFACE(poly_num, top_rad);
     
-    cylinder_height = height_t;
-    
+    cone_height = height_t;
     lateral_layer_count = lateral_t;
-    lateral_node_height = cylinder_height/lateral_layer_count;
+    slant_height = sqrt(pow(base_rad - top_rad,2) + cone_height*cone_height);
+    lateral_node_height = cone_height/lateral_layer_count;
+    incr_rad = (base_rad-top_rad)/lateral_layer_count;
+    
     init_lateral_array();
     
     color_vec = new float[TRI_NODE_SIZE][DIMENSION_IMAGE_SIZE];
@@ -54,24 +75,40 @@ public class rectangularCYLINDER
         lateral_array[i][j] = new vertexNODE(TRI_NODE_SIZE);
         lateral_array[i][j+1] = new vertexNODE(TRI_NODE_SIZE);
         
-        temp_points[0] = Arrays.copyOf(cylinder_ends[0].get_node_i_point_1(j/2), DIMENSION_SIZE);
-        temp_points[1] = Arrays.copyOf(cylinder_ends[0].get_node_i_point_2(j/2), DIMENSION_SIZE);
-        if(i%2==0)
-        { temp_points[2] = Arrays.copyOf(cylinder_ends[0].get_node_i_point_1(j/2), DIMENSION_SIZE); }
-        else{ temp_points[2] = Arrays.copyOf(cylinder_ends[0].get_node_i_point_2(j/2), DIMENSION_SIZE); }
+        temp_points[0][0] = (base_rad-i*incr_rad)*cos(j*PI/poly_num);
+        temp_points[0][1] = (base_rad-i*incr_rad)*sin(j*PI/poly_num);
+        temp_points[0][2] = i*lateral_node_height;
+        temp_points[1][0] = (base_rad-i*incr_rad)*cos(2*(j/2+1)*PI/poly_num);
+        temp_points[1][1] = (base_rad-i*incr_rad)*sin(2*(j/2+1)*PI/poly_num);
+        temp_points[1][2] = i*lateral_node_height; 
         
-        temp_points[0][2] += i*lateral_node_height;
-        temp_points[1][2] += i*lateral_node_height;
-        temp_points[2][2] += (i+1)*lateral_node_height;
+        if(i%2==0)
+        { 
+          temp_points[2] = Arrays.copyOf(temp_points[0], DIMENSION_SIZE);
+          temp_points[2][0] -= incr_rad*cos(j*PI/poly_num);
+          temp_points[2][1] -= incr_rad*sin(j*PI/poly_num);      
+        }
+        else{ 
+          temp_points[2] = Arrays.copyOf(temp_points[1], DIMENSION_SIZE);
+          temp_points[2][0] -= incr_rad*cos(2*(j/2+1)*PI/poly_num);
+          temp_points[2][1] -= incr_rad*sin(2*(j/2+1)*PI/poly_num); 
+        }
+        
+
+        temp_points[2][2] += lateral_node_height;
         
         lateral_array[i][j].set_node(new float[][] {temp_points[0], temp_points[1], temp_points[2]} );
         
         if(i%2 == 0)
         {
           temp_points[0] = Arrays.copyOf(temp_points[1], DIMENSION_SIZE);
+          temp_points[1][0] -= incr_rad*cos(2*(j/2+1)*PI/poly_num);
+          temp_points[1][1] -= incr_rad*sin(2*(j/2+1)*PI/poly_num);
           temp_points[1][2] += lateral_node_height;
         }else{
           temp_points[1] = Arrays.copyOf(temp_points[0], DIMENSION_SIZE);
+          temp_points[0][0] -= incr_rad*cos(j*PI/poly_num);
+          temp_points[0][1] -= incr_rad*sin(j*PI/poly_num);
           temp_points[0][2] += lateral_node_height;
         }
         
@@ -83,17 +120,16 @@ public class rectangularCYLINDER
   
   public void display()
   {
-    cylinder_ends[0].display();
+    cone_ends[0].display();
     
     pushMatrix();
-    translate(0,0,cylinder_height);
-    cylinder_ends[1].display();
+    translate(0,0, cone_height);
+    cone_ends[1].display();
     popMatrix();
 
     beginShape(TRIANGLE);
     textureMode(IMAGE);
     texture(bw);  
-    
     
     for(int i = 0; i < lateral_array.length; i++)
     {
@@ -106,6 +142,7 @@ public class rectangularCYLINDER
         
         for(int t = 0; t < TRI_NODE_SIZE; t++)
         {
+          
           vertex(temp_points[t][0], 
                  temp_points[t][1],
                  temp_points[t][2],
