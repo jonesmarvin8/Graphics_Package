@@ -12,7 +12,7 @@ public class frustrumCONE
   public final static float DEFAULT_BASE_RAD = 150;
   public final static float DEFAULT_TOP_RAD = 50;
   public final static int DEFAULT_SELECTION = 0;  
-    
+  
   int poly_num,
       lateral_layer_count;
   float base_rad,
@@ -27,6 +27,7 @@ public class frustrumCONE
   float[][] color_vec;
   color[] color_array;
     
+  PShape lateral_surface;
   
   PImage bw;
   Random rand; 
@@ -39,6 +40,7 @@ public class frustrumCONE
     color_vec = new float[TRI_NODE_SIZE][DIMENSION_IMAGE_SIZE];
     setup_bw();
     set_colors();
+    init_lateral_surface();
   }
   
   public frustrumCONE(int n_t, float rad, int lateral_t, float height_t, int sel_t)
@@ -52,6 +54,7 @@ public class frustrumCONE
     color_vec = new float[TRI_NODE_SIZE][DIMENSION_IMAGE_SIZE];
     setup_bw();
     set_colors();
+    init_lateral_surface();
   }
   
   private void set_parameters(int n_t, float[] rad_array, int lateral_t, float height_t)
@@ -152,18 +155,19 @@ public class frustrumCONE
     }
   }
   
-  public void display()
+  public void update_colors()
   {
-    cone_ends[0].display();
+    set_colors();
+    init_lateral_surface();
+  }
+  
+  private void init_lateral_surface()
+  {
+    lateral_surface = createShape();
     
-    pushMatrix();
-    translate(0,0, cone_height);
-    cone_ends[1].display();
-    popMatrix();
-
-    beginShape(TRIANGLE);
-    textureMode(IMAGE);
-    texture(bw);  
+    lateral_surface.beginShape(TRIANGLE);
+    lateral_surface.textureMode(IMAGE);
+    lateral_surface.texture(bw);  
     
     for(int i = 0; i < lateral_array.length; i++)
     {
@@ -177,7 +181,7 @@ public class frustrumCONE
         for(int t = 0; t < TRI_NODE_SIZE; t++)
         {
           
-          vertex(temp_points[t][0], 
+          lateral_surface.vertex(temp_points[t][0], 
                  temp_points[t][1],
                  temp_points[t][2],
                  color_vec[t][0],
@@ -186,11 +190,21 @@ public class frustrumCONE
       }
     }
     
-    endShape();      
+    lateral_surface.endShape(CLOSE);
+  }
+  
+  public void display()
+  {
+    cone_ends[0].display();
+    
+    pushMatrix();
+    translate(0,0, cone_height);
+    cone_ends[1].display();
+    popMatrix();
+    
+    shape(lateral_surface,0,0);
   }
 
-  //TODO: needed?
-  //minimize size for memory usage.
   private void setup_bw()
   {
     color_array[0] = color(0,0,0,255);

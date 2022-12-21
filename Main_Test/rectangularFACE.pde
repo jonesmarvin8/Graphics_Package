@@ -40,9 +40,7 @@ public class rectangularFACE
     setup_bw();
   }
   
-  /*
-  TODO: non cube, take in quad/tri options (make sure to check for 3/4)
-  */
+
   
   private void init_quad_face()
   {

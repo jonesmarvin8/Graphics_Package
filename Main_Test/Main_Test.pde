@@ -4,16 +4,11 @@ rectangularPRISM test1;
 frustrumCONE test;
 
 float[] t;
-
-Boolean disO = true,
-        dis1 = false,
-        dis2 = false;
-
 Boolean update;
-Boolean want_vc = false;
+
 int code;
-int d;
-Boolean vc_decrypt = false;
+int timer = 1;
+
 float x_tran = 150;
 float y_tran = 150;
 float z_tran = 0;
@@ -26,7 +21,7 @@ void setup()
 {
   size(500,500, P3D);
   update = false;
-  test = new frustrumCONE(10, 150,10,200,1);
+  test = new frustrumCONE(50, 150, 50,200,1);
 }
 
 void draw()
@@ -36,6 +31,13 @@ void draw()
   
   if(update == true)
   { check_for_updates(); }
+  
+  if(timer%20 == 0)
+  { 
+    test.update_colors(); 
+    timer = 1;
+  }
+  else{ timer++; }
 
   pushMatrix();
   translate(x_tran, y_tran, z_tran);

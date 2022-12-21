@@ -18,7 +18,6 @@ public class rectangularPRISM
 
   public void display()
   { 
-    
     prism_array[0].display();
     pushMatrix();
     translate(0,0,-node_width*(face_width));
