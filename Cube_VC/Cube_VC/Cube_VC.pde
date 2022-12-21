@@ -2,7 +2,7 @@
 rectangularPRISM test1;
 //rectangularCYLINDER test;
 frustrumCONE test;
-dodecahedronSURFACE die;
+
 float[] t;
 
 Boolean disO = true,
@@ -26,9 +26,7 @@ void setup()
 {
   size(500,500, P3D);
   update = false;
-  test = new frustrumCONE(5, new float[] {150.0,0},10,200);
-  die = new dodecahedronSURFACE(5,50);
-  //test1 = new rectangularPRISM(150,5);
+  test = new frustrumCONE(10, 150,10,200,1);
 }
 
 void draw()
@@ -36,83 +34,25 @@ void draw()
   background(100);
   rectMode(CENTER);
   
-    if(update == true)
+  if(update == true)
   { check_for_updates(); }
 
-  
-  if(disO == true)
-  {
-    pushMatrix();
-    translate(x_tran, y_tran, z_tran);
-    pushMatrix();
-    rotateX(x_rot);
-    rotateY(y_rot);
-    rotateZ(z_rot);
-    fill(255);
-    die.display();
-    popMatrix();
-    popMatrix();
-  }
+  pushMatrix();
+  translate(x_tran, y_tran, z_tran);
+  pushMatrix();
+  rotateX(x_rot);
+  rotateY(y_rot);
+  rotateZ(z_rot);
+  fill(255);
+  test.display();
+  popMatrix();
+  popMatrix();
 }
 
 void keyPressed()
 {  
   update = true;
-  code = keyCode;
-  
-  if(code == 76) //Lines up shares to decrypt (hit "L")
-  {
-    if(vc_decrypt == false)
-    {
-      vc_decrypt = true;
-    }
-    else if(vc_decrypt == true)
-    { save("Decrypt.png"); }
-  }
-  else if(code == 80) //Print screen (hit "P")
-  {
-//    test_cube.select_painting();
-  }
-  else if(code == 49) //1
-  {  
-    if(dis1 == false)
-    { 
-      dis1 = true;
-      dis2 = false;
-      disO = false;
-    }
-    else if( dis1 == true)
-    { save("Share_1.png"); }
-  }
-  else if(code == 50) //Display Share 2 (hit "2")
-  {
-      
-    if(dis2 == false)
-    {
-      dis1 = false;
-      dis2 = true;
-      disO = false;
-    }
-    else if( dis2 == true)
-    { save("Share_2.png"); }
-  }
-  else if(code == 51) //display original
-  {
-    if(disO == false)
-    {
-      dis1 = false;
-      dis2 = false;
-      disO = true;
-    }
-    else if(disO == true)
-    { save("Original.png"); }
-  }
-  else if(code == 52) //make black
-  {
-     //test_cube.fuck(); 
-  }
-//}
-  else if(code == 82)
+  code = keyCode;if(code == 82)
   { x_rot += PI/5; }
   else if(code == 84)
   { x_rot -= PI/5; }
@@ -124,7 +64,6 @@ void keyPressed()
   { z_rot += PI/5;}
   else if(code == 86) //v
   { z_rot -= PI/5;}
- 
 }
 
 
@@ -133,16 +72,16 @@ void keyReleased()
 
 void check_for_updates() //key codes to move object
 {
- if(code == 65)
-  {  x_tran -=5;}
-  else if(code == 68)
+ if(code == 65) //A
   {  x_tran +=5;}
-  else if(code == 87)
-  { y_tran -= 5;}
-  else if(code == 83)
+  else if(code == 68)//D
+  {  x_tran -=5;}
+  else if(code == 87)//W
   { y_tran += 5;}
-  else if(code == 81)
-  { z_tran -= 5;}
-  else if(code == 69)
+  else if(code == 83)//S
+  { y_tran -= 5;}
+  else if(code == 81) //Q
   { z_tran += 5;}
+  else if(code == 69) //E
+  { z_tran -= 5;}
 }

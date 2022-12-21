@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.Random;
 
 public class frustrumCONE
 {
@@ -10,13 +11,13 @@ public class frustrumCONE
   public final static int NUM_ENDS = 2;
   public final static float DEFAULT_BASE_RAD = 150;
   public final static float DEFAULT_TOP_RAD = 50;
+  public final static int DEFAULT_SELECTION = 0;  
     
   int poly_num,
       lateral_layer_count;
   float base_rad,
         top_rad,
         cone_height,
-        slant_height,
         lateral_node_height,
         incr_rad;
   ngonFACE[] cone_ends;
@@ -24,10 +25,36 @@ public class frustrumCONE
   
   float[][] temp_points;
   float[][] color_vec;
+  color[] color_array;
+    
   
   PImage bw;
+  Random rand; 
   
   public frustrumCONE(int n_t, float[] rad_array, int lateral_t, float height_t)
+  {      
+    set_parameters(n_t, rad_array, lateral_t, height_t);
+    init_lateral_array();
+    
+    color_vec = new float[TRI_NODE_SIZE][DIMENSION_IMAGE_SIZE];
+    setup_bw();
+    set_colors();
+  }
+  
+  public frustrumCONE(int n_t, float rad, int lateral_t, float height_t, int sel_t)
+  {
+    if(sel_t != DEFAULT_SELECTION)
+    { set_parameters(n_t, new float[] {rad, 0}, lateral_t, height_t); }
+    else{ set_parameters(n_t, new float[] {rad, rad}, lateral_t, height_t); }
+    
+    init_lateral_array();
+    
+    color_vec = new float[TRI_NODE_SIZE][DIMENSION_IMAGE_SIZE];
+    setup_bw();
+    set_colors();
+  }
+  
+  private void set_parameters(int n_t, float[] rad_array, int lateral_t, float height_t)
   {
     if(rad_array.length < 2)
     { 
@@ -44,6 +71,9 @@ public class frustrumCONE
       top_rad = rad_array[0];
     }
     
+    rand = new Random();
+    color_array = new color[10];
+    
     poly_num = n_t;
     
     cone_ends = new ngonFACE[NUM_ENDS];
@@ -52,14 +82,8 @@ public class frustrumCONE
     
     cone_height = height_t;
     lateral_layer_count = lateral_t;
-    slant_height = sqrt(pow(base_rad - top_rad,2) + cone_height*cone_height);
     lateral_node_height = cone_height/lateral_layer_count;
-    incr_rad = (base_rad-top_rad)/lateral_layer_count;
-    
-    init_lateral_array();
-    
-    color_vec = new float[TRI_NODE_SIZE][DIMENSION_IMAGE_SIZE];
-    setup_bw();
+    incr_rad = (base_rad-top_rad)/lateral_layer_count;  
   }
 
   private void init_lateral_array()
@@ -112,8 +136,18 @@ public class frustrumCONE
           temp_points[0][2] += lateral_node_height;
         }
         
-        lateral_array[i][j+1].set_node(new float[][] {temp_points[0], temp_points[1], temp_points[2]} );
-        
+        lateral_array[i][j+1].set_node(new float[][] {temp_points[0], temp_points[1], temp_points[2]} );     
+      }
+    }
+  }
+  
+  private void set_colors()
+  {
+    for(int i = 0; i < lateral_array.length; i++)
+    {
+      for(int j = 0; j < lateral_array[0].length; j++)
+      {
+        lateral_array[i][j].set_color(color_array[rand.nextInt(color_array.length)]);
       }
     }
   }
@@ -159,40 +193,41 @@ public class frustrumCONE
   //minimize size for memory usage.
   private void setup_bw()
   {
-    bw = createImage(50, 50, ARGB);
-    for (int i = 0; i < 25; i++)
+    color_array[0] = color(0,0,0,255);
+    color_array[1] = color(255,0,0,255);
+    color_array[2] = color(0,128,0,255);
+    color_array[3] = color(0,0,255,255);
+    color_array[4] = color(192,192,192,255);
+    color_array[5] = color(255,255,0,255);
+    color_array[6] = color(128,0,128,255);
+    color_array[7] = color(0,0,128,255);
+    color_array[8] = color(128,0,128,255);
+    color_array[9] = color(255,255,255,255);
+    
+    bw = createImage(10, 100, ARGB);
+    for (int i = 0; i < bw.height; i++)
     {
-      for (int j = 0; j < 50; j++)
+      for (int j = 0; j < 10; j++)
       { 
-        bw.set(i, j, color(255, 255, 255, 150));
-      }
-    }
-
-    for (int i = 25; i < 50; i++)
-    {
-      for (int j = 0; j < 50; j++)
-      { 
-        bw.set(i, j, color(0, 0, 0, 150));
+        bw.set(j, i, color_array[(i-i%10)/10]);
       }
     }
   }
 
-  //TODO: fix these in general.
-  private void set_color_vec(int c_t)
+  private void set_color_vec(color c_t)
   {
-    if(c_t == 255)
+    int temp = -1;
+    int i = 0;
+    
+    while(temp == -1)
     {
-      color_vec[0] = Arrays.copyOf( new float[] {0,0}, 2);
-      color_vec[1] = Arrays.copyOf( new float[] {24,0}, 2);
-      color_vec[0] = Arrays.copyOf( new float[] {24,24}, 2);
-      color_vec[1] = Arrays.copyOf( new float[] {0,24}, 2);
-    } else if (c_t == 0)
-    {
-      color_vec[0] = Arrays.copyOf( new float[] {26,0}, 2);
-      color_vec[1] = Arrays.copyOf( new float[] {49,0}, 2);
-      color_vec[0] = Arrays.copyOf( new float[] {49,24}, 2);
-      color_vec[1] = Arrays.copyOf( new float[] {26,24}, 2);
+      if(red(c_t) == red(color_array[i]) && blue(c_t) == blue(color_array[i]) && green(c_t) == green(color_array[i]))
+      { temp = i; }
+      else{ i++; }
     }
+    
+    color_vec[0] = Arrays.copyOf( new float[] {0,i*10}, 2);
+    color_vec[1] = Arrays.copyOf( new float[] {9,i*10}, 2);
+    color_vec[2] = Arrays.copyOf( new float[] {9,(i+1)*10-1}, 2); 
   }
-
 }

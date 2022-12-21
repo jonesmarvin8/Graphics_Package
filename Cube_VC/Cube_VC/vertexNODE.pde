@@ -16,8 +16,8 @@ public class vertexNODE
   public final static int DEFAULT_VERTEX_SIZE = 3;
   
   coordinatePOINT[] node_points;
-  int node_color,
-      node_size;
+  color node_color;
+  int node_size;
   
   vertexNODE(int ns_t)
   {
@@ -31,7 +31,7 @@ public class vertexNODE
   
   vertexNODE()
   {
-    node_color = COLOR_DEFAULT; //Default color to white.
+    node_color = color(COLOR_DEFAULT,COLOR_DEFAULT,COLOR_DEFAULT,COLOR_DEFAULT); //Default color to white.
     node_size = DEFAULT_VERTEX_SIZE;
     
     node_points = new coordinatePOINT[node_size];
@@ -40,15 +40,13 @@ public class vertexNODE
   }
   
 
-  public void set_color(int c_t)
+  public void set_color(color c_t)
   { 
-    if( c_t == 255 || c_t == 0)
-    { node_color = c_t; }
-    else{ c_t = COLOR_DEFAULT; } 
+    node_color = c_t; 
   } 
   
   public void invert_color()
-  { node_color = 255-node_color; }
+  { node_color = color(255-red(node_color), 255-green(node_color), 255-blue(node_color), 255); }
 
   public int get_color()
   { return node_color; }
